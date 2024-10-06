@@ -11,14 +11,17 @@
         <h1>Generate a <br> <span> Random Password </span></h1>
         <div class="display">
             <input type="text" id="password" placeholder="Password">
-            <img src="images/1.png" id="copyIcon" onclick="copyPassword()">
+            <div id="copyIconContainer" onclick="copyPassword()">
+                <img src="images/1.png" id="copyIcon">
+            </div>
         </div>
         <button onclick="createPassword()"><img src="images/generate.png"> Generate Password</button>
     </div>
 
     <script>
         const passwordBox = document.getElementById('password');
-        const copyIcon = document.getElementById('copyIcon');
+        const copyIconContainer = document.getElementById('copyIconContainer');
+        let copyIcon = document.getElementById('copyIcon');
 
         const length = 12;
         const upperCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -28,9 +31,9 @@
         
         const allChars = upperCase + lowerCase + number + symbol;
 
-        function createPassword () {
+        function createPassword() {
             let password = '';
-        
+
             password += upperCase[Math.floor(Math.random() * upperCase.length)];
             password += lowerCase[Math.floor(Math.random() * lowerCase.length)];
             password += number[Math.floor(Math.random() * number.length)];
@@ -38,38 +41,41 @@
 
             while (length > password.length) {
                 password += allChars[Math.floor(Math.random() * allChars.length)];
-            } 
-            
+            }
+
             passwordBox.value = password;
-            // copyIcon.src = 'images/1.png';  // Revert to the original icon
+            copyIconContainer.innerHTML = '<img src="images/1.png" id="copyIcon">';
+            copyIcon = document.getElementById('copyIcon');  // Restore the copy icon
         }
 
-        function copyPassword () {
+        function copyPassword() {
             navigator.clipboard.writeText(passwordBox.value).then(function() {
                 console.log('Password copied to clipboard');
-                saveTask ();
-                copyIcon.src = 'images/2.png';  // Change the icon to "copied"
+                saveTask();
+                copyIcon.style.display = 'none';  // Hide the copy icon
+                copyIconContainer.textContent = 'Copied';  // Show "Copied" text
                 setTimeout(() => {
-                    copyIcon.src = 'images/1.png';  // Revert back to original icon after 2 seconds
+                    copyIconContainer.innerHTML = '<img src="images/1.png" id="copyIcon">';
+                    copyIcon = document.getElementById('copyIcon');  // Restore the copy icon
                 }, 2000);
-                
             }).catch(function(error) {
                 console.error('Error copying password: ', error);
                 alert('Failed to copy password: ' + error);
             });
         }
 
-        function saveTask () {
-            localStorage.setItem('savedPassword', passwordBox.value);
+        function saveTask() {
+            localStorage.setItem('savedPassword', passwordBox.value);  // Save the password in localStorage
         }
-        function showTask () {
+
+        function showTask() {
             const savedPassword = localStorage.getItem('savedPassword');
-            if(savedPassword){
-                passwordBox.value = savedPassword;
+            if (savedPassword) {
+                passwordBox.value = savedPassword;  // Retrieve and show the saved password
             }
         }
-        showTask();
 
+        showTask();  // Call the function to display the saved password on load
     </script>
 
 </body>
